@@ -1,0 +1,124 @@
+project: BibliotecaDUOC
+description: "Sistema de gestión de biblioteca universitaria"
+
+# Nombres de servicios deben coincidir con los definidos en el grupo (.yaml de groups/)
+# Variables extraídas en un step están disponibles como {{nombre_var}} en steps posteriores
+
+scenarios:
+
+  easy:
+    - name: "Listado y creación de libros"
+      steps:
+        - name: "Listar todos los libros"
+          service: biblioteca-service
+          method: GET
+          path: /api/v1/libros
+          expect_status: 200
+
+        - name: "Contar total de libros"
+          service: biblioteca-service
+          method: GET
+          path: /api/v1/libros/total
+          expect_status: 200
+
+        - name: "Crear un libro nuevo"
+          service: biblioteca-service
+          method: POST
+          path: /api/v1/libros
+          body:
+            isbn: "978-EVAL-EASY-001"
+            titulo: "Libro de Prueba Evaluador"
+            editorial: "EvalEditorial"
+            fechaPublicacion: 2024
+            autor: "Evaluador DSY1103"
+          expect_status: 201
+          extract:
+            libro_id: "$.id"
+
+        - name: "Obtener el libro recién creado"
+          service: biblioteca-service
+          method: GET
+          path: /api/v1/libros/{{libro_id}}
+          expect_status: 200
+
+  medium:
+    - name: "Creación y actualización"
+      steps:
+        - name: "Crear libro para actualizar"
+          service: biblioteca-service
+          method: POST
+          path: /api/v1/libros
+          body:
+            isbn: "978-EVAL-MED-001"
+            titulo: "Libro Para Actualizar"
+            editorial: "EvalEditorial"
+            fechaPublicacion: 2023
+            autor: "Evaluador DSY1103"
+          expect_status: 201
+          extract:
+            libro_id: "$.id"
+
+        - name: "Actualizar datos del libro"
+          service: biblioteca-service
+          method: PUT
+          path: /api/v1/libros/{{libro_id}}
+          body:
+            isbn: "978-EVAL-MED-001-UPD"
+            titulo: "Libro Actualizado Correctamente"
+            editorial: "EvalEditorial"
+            fechaPublicacion: 2025
+            autor: "Evaluador DSY1103 v2"
+          expect_status: 200
+
+        - name: "Buscar libros por editorial"
+          service: biblioteca-service
+          method: GET
+          path: /api/v1/libros/editorial/EvalEditorial
+          expect_status: 200
+
+  hard:
+    - name: "Ciclo de vida completo (CRUD + verificación)"
+      steps:
+        - name: "Crear libro"
+          service: biblioteca-service
+          method: POST
+          path: /api/v1/libros
+          body:
+            isbn: "978-EVAL-HARD-001"
+            titulo: "Libro Ciclo Completo"
+            editorial: "EvalEditorial"
+            fechaPublicacion: 2024
+            autor: "Evaluador DSY1103"
+          expect_status: 201
+          extract:
+            libro_id: "$.id"
+
+        - name: "Verificar que existe (GET)"
+          service: biblioteca-service
+          method: GET
+          path: /api/v1/libros/{{libro_id}}
+          expect_status: 200
+
+        - name: "Actualizar libro (PUT)"
+          service: biblioteca-service
+          method: PUT
+          path: /api/v1/libros/{{libro_id}}
+          body:
+            isbn: "978-EVAL-HARD-001-UPD"
+            titulo: "Libro Ciclo Completo Actualizado"
+            editorial: "EvalEditorial"
+            fechaPublicacion: 2025
+            autor: "Evaluador DSY1103 v2"
+          expect_status: 200
+
+        - name: "Eliminar libro (DELETE)"
+          service: biblioteca-service
+          method: DELETE
+          path: /api/v1/libros/{{libro_id}}
+          expect_status: 204
+
+        - name: "Verificar que ya no existe (GET → 404)"
+          service: biblioteca-service
+          method: GET
+          path: /api/v1/libros/{{libro_id}}
+          expect_status: 404

@@ -1,0 +1,9 @@
+group_name: "Test - Biblioteca DUOC"
+project: biblioteca_duoc
+students:
+  - toopazo
+
+services:
+  - name: biblioteca-service
+    repo: https://github.com/toopazo/dsy1103_bibliotecaduoc
+    port: 8081
