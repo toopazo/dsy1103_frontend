@@ -1,0 +1,15 @@
+FROM eclipse-temurin:21-jdk-alpine
+
+RUN apk add --no-cache bash git
+
+# Entrypoint script from this repo
+COPY runner-entrypoint.sh /runner-entrypoint.sh
+RUN chmod +x /runner-entrypoint.sh
+
+WORKDIR /app
+# Student source code is volume-mounted here at runtime.
+# Maven cache (~/.m2) is also mounted from the host for fast subsequent builds.
+
+ENV PORT=8080
+
+ENTRYPOINT ["/runner-entrypoint.sh"]

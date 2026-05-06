@@ -1,3 +1,18 @@
+# Runtime directories (never commit)
+clones/
+secrets/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node / React
+node_modules/
+dist/
+.env
+
 # Compiled class file
 *.class
 

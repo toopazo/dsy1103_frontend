@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(rm:*)",
+      "Bash(chmod:*)",
+      "Bash(python3:*)",
+      "Bash(pip3:*)",
+      "Bash(pip:*)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(node:*)",
+      "Bash(curl:*)",
+      "Bash(mvn:*)",
+      "Bash(java:*)",
+      "Read(*)",
+      "Edit(*)",
+      "Write(*)",
+
+      "Bash(docker build -f Dockerfile.spring-runner*)",
+      "Bash(docker build -f Dockerfile.evaluator*)",
+      "Bash(docker run *dsy1103-spring-runner*)",
+      "Bash(docker run *dsy1103-evaluator*)",
+      "Bash(docker stop dsy1103-*)",
+      "Bash(docker rm dsy1103-*)",
+      "Bash(docker ps*)",
+      "Bash(docker images*)",
+      "Bash(docker logs dsy1103-*)",
+      "Bash(docker inspect dsy1103-*)",
+      "Bash(docker-compose up*)",
+      "Bash(docker-compose down*)",
+      "Bash(docker-compose logs*)"
+    ]
+  }
+}
