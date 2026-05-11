@@ -23,7 +23,6 @@
       "Read(*)",
       "Edit(*)",
       "Write(*)",
-
       "Bash(docker build -f Dockerfile.spring-runner*)",
       "Bash(docker build -f Dockerfile.evaluator*)",
       "Bash(docker run *dsy1103-spring-runner*)",
@@ -36,7 +35,14 @@
       "Bash(docker inspect dsy1103-*)",
       "Bash(docker-compose up*)",
       "Bash(docker-compose down*)",
-      "Bash(docker-compose logs*)"
+      "Bash(docker-compose logs*)",
+      "Bash(timeout 8 bash -c \"echo '' | nc -w 6 ep-plain-rain-a8wzncnl-pooler.eastus2.azure.neon.tech 5432 2>&1\")",
+      "Bash(docker run *)",
+      "Bash(docker rm *)",
+      "Bash(uvicorn main:app --port 8000)",
+      "WebFetch(domain:commons.wikimedia.org)",
+      "WebFetch(domain:unacesshra.cl)",
+      "WebFetch(domain:www.dgac.gob.cl)"
     ]
   }
 }

@@ -1,6 +1,7 @@
 """Manages cloning, building, and running student Spring Boot services via Docker."""
 
 import asyncio
+import os
 import subprocess
 import shutil
 from pathlib import Path
@@ -70,6 +71,7 @@ def start_service(
     source_dir: Path,
     port: int,
     secrets_file: Optional[Path] = None,
+    env_vars: Optional[dict] = None,
 ) -> "docker.models.containers.Container":
     """Start a spring-runner container for the given cloned repo."""
     client = _docker_client()
@@ -86,7 +88,7 @@ def start_service(
 
     volumes = {
         str(source_dir.resolve()): {"bind": "/app", "mode": "rw"},
-        str(MAVEN_CACHE): {"bind": "/root/.m2", "mode": "rw"},
+        str(MAVEN_CACHE): {"bind": "/m2", "mode": "rw"},
     }
 
     if secrets_file and secrets_file.exists():
@@ -99,13 +101,30 @@ def start_service(
     # Ensure Maven cache dir exists on host so Docker doesn't create it as root
     MAVEN_CACHE.mkdir(parents=True, exist_ok=True)
 
+    environment = {
+        "PORT": str(port),
+        # UID 1000 has no /etc/passwd entry in the image, so HOME is unset.
+        # Point it to a writable tmpfs directory.
+        "HOME": "/tmp/runner-home",
+        # Tell the Maven wrapper where to find (or cache) the Maven binary.
+        # Matches our /m2 volume so the binary is reused across runs.
+        "MAVEN_USER_HOME": "/m2",
+        # Gradle equivalent — reuses the same volume.
+        "GRADLE_USER_HOME": "/m2/gradle",
+    }
+    if env_vars:
+        environment.update(env_vars)
+
     print(f"[docker] Starting {container_name} on port {port} ...")
     container = client.containers.run(
         image=RUNNER_IMAGE,
         name=container_name,
         volumes=volumes,
-        environment={"PORT": str(port)},
-        ports={f"{port}/tcp": port},
+        environment=environment,
+        # host network: avoids Docker bridge MTU issues that break TLS handshakes
+        # to external DBs (e.g. NeonDB). Port is accessible directly on the host.
+        network_mode="host",
+        user=f"{os.getuid()}:{os.getgid()}",
         detach=True,
     )
     return container

@@ -7,3 +7,10 @@ services:
   - name: biblioteca-service
     repo: https://github.com/toopazo/dsy1103_bibliotecaduoc
     port: 8081
+    # JDBC URL sin channel_binding (no soportado por el pooler de NeonDB)
+    env_vars:
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://ep-plain-rain-a8wzncnl-pooler.eastus2.azure.neon.tech/neondb?sslmode=require&socketTimeout=30&connectTimeout=30"
+      # Java 21 checks certificate revocation (OCSP/CRL) by default.
+      # The Azure OCSP endpoint is unreachable from inside Docker, causing the
+      # TLS handshake to hang until timeout. Disabling revocation check fixes it.
+      JAVA_TOOL_OPTIONS: "-Dcom.sun.net.ssl.checkRevocation=false -Djdk.tls.client.disableRevocationCheck=true"

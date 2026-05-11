@@ -2,6 +2,15 @@
 clones/
 secrets/
 
+# LaTeX build output
+EP2/build/
+
+# LibreOffice lock files
+.~lock.*#
+
+# PDF exports (derived artifacts)
+*.pdf
+
 # Python
 __pycache__/
 *.pyc

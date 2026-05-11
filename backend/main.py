@@ -49,7 +49,7 @@ def start_service(req: StartServiceRequest):
     try:
         source_dir = dm.clone_repo(req.name, req.repo)
         secrets = Path(req.secrets_file) if req.secrets_file else None
-        container = dm.start_service(req.name, source_dir, req.port, secrets)
+        container = dm.start_service(req.name, source_dir, req.port, secrets, req.env_vars)
         return {
             "status": "starting",
             "name": req.name,

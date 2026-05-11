@@ -6,6 +6,10 @@ echo " DSY1103 Spring Runner"
 echo " Port: ${PORT:-8080}"
 echo "=============================="
 
+# Ensure a writable HOME exists (container may run as non-root UID without /etc/passwd entry)
+export HOME="${HOME:-/tmp/runner-home}"
+mkdir -p "$HOME"
+
 # Inject secrets file if provided (mounted at /secrets/app-secrets.properties).
 # Copies into the source tree BEFORE mvn/gradle build so Spring finds it on the classpath.
 SECRETS_TARGET="src/main/resources/application-secrets.properties"
@@ -23,7 +27,7 @@ fi
 if [ -f "mvnw" ]; then
     echo "[runner] Building with Maven Wrapper..."
     chmod +x mvnw
-    ./mvnw package -DskipTests
+    ./mvnw package -DskipTests -Dmaven.repo.local=/m2/repository
     JAR=$(ls target/*.jar 2>/dev/null | grep -v '\.original$' | head -1)
 
 elif [ -f "gradlew" ]; then

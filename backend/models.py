@@ -7,6 +7,7 @@ class StartServiceRequest(BaseModel):
     repo: str
     port: int
     secrets_file: Optional[str] = None  # absolute path to a .properties file on the host
+    env_vars: Optional[dict[str, str]] = None  # extra env vars injected into the container
 
 
 class ServiceStatus(BaseModel):
